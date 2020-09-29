@@ -8,6 +8,7 @@ namespace PruebaAA_ACastro.Models
     class PruebaAAContext : DbContext
     {
         private const string connectionString = "Server=ALFREDO-PC\\SQLEXPRESS;Database=PruebaAAACastro;Trusted_Connection=True;";
+        //private const string connectionString = "Server={SQLServerInstance};Database={DBName};Trusted_Connection=True;";
 
         public PruebaAAContext()
         {

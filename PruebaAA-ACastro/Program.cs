@@ -2,6 +2,7 @@
 using Microsoft.VisualBasic.FileIO;
 using PruebaAA_ACastro.Models;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -13,7 +14,8 @@ namespace PruebaAA_ACastro
 {
     class Program
     {
-        static readonly string url = "https://storage10082020.blob.core.windows.net/y9ne9ilzmfld/Stock.CSV";
+        static readonly string url = "https://drive.google.com/uc?export=download&id=1odSfITqFQjOODr29dz-soWFlvHk4LL2H"; //aprox 10 MB
+        //static readonly string url = "https://storage10082020.blob.core.windows.net/y9ne9ilzmfld/Stock.CSV"; //aprox 637 MB
         static readonly string destFileName = "Stock.csv";
         static string sTotal = string.Empty;
 
@@ -38,6 +40,8 @@ namespace PruebaAA_ACastro
 
                     //Mientras se este haciendo la descarga
                     while (client.IsBusy) { }
+
+                    ProcessCSVFile(destFileName);
                 }
 
                 //bool res = ProcessCSVFile(destFileName);
@@ -49,7 +53,7 @@ namespace PruebaAA_ACastro
         }
 
         /// <summary>
-        /// Recibe una longitud en bytes y devuelve un string para mostrar tamaño de facil lectura
+        /// Recibe una longitud en bytes y devuelve un string para mostrar el tamaño de facil lectura
         /// </summary>
         /// <param name="len"></param>
         /// <returns></returns>
@@ -82,7 +86,7 @@ namespace PruebaAA_ACastro
             Console.WriteLine();
             Console.WriteLine("Descarga de fichero CSV terminada.");
 
-            ProcessCSVFile(destFileName);
+            //ProcessCSVFile(destFileName);
         }
 
         /// <summary>
@@ -127,15 +131,14 @@ namespace PruebaAA_ACastro
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        private static bool ProcessCSVFile(string fileName)
+        private static void ProcessCSVFile(string fileName)
         {
-            bool result = true;
-            
+           
             //Verificar si existe el fichero
             if (!File.Exists(fileName))
             {
                 Console.WriteLine("No existe el fichero CSV.");
-                return false;
+                return;
             }
 
             Console.WriteLine("Procesando fichero CSV.");
@@ -168,34 +171,38 @@ namespace PruebaAA_ACastro
 
                     List<Stock> list = new List<Stock>();
 
-                    while (i<1000 /*!parser.EndOfData*/)
+                    //while (i < 10000)
+                    while (!parser.EndOfData)
                     {
-                        Console.Write("\rLinea {0}", i+1);
+                        int percent = (int)Math.Round((double)(100 * i) / lineCount);
+                        Console.Write("\rLinea {0} - {1} %", i+1, percent);
 
                         if (i != 0 && i % batchSize == 0) //Cada vez que se llega al tamaño del lineas a procesar se guardan los cambios y se crea un nuevo DBContext
                         {
                             context.Stocks.AddRange(list);
                             context.SaveChanges();
                             context = new PruebaAAContext();
+                            context.ChangeTracker.DetectChanges();
                             list.Clear();
                         }
 
                         //Se lee una linea de fichero
                         string[] fields = parser.ReadFields();
 
-                        //Se crea el modelo con los campos de la linea
-                        Stock stock = new Stock
+                        if (fields != null && fields.Length == 4)
                         {
-                            PointOfSale = fields[0],
-                            Product = fields[1],
-                            Date = fields[2], //DateTime.ParseExact(fields[2], "yyyy-MM-dd", CultureInfo.InvariantCulture),
-                            StockQty = int.Parse(fields[3])
-                        };
+                            //Se crea el modelo con los campos de la linea
+                            Stock stock = new Stock
+                            {
+                                PointOfSale = fields[0],
+                                Product = fields[1],
+                                Date = fields[2], //DateTime.ParseExact(fields[2], "yyyy-MM-dd", CultureInfo.InvariantCulture),
+                                StockQty = int.Parse(fields[3])
+                            };
 
-                        //Se agrega a la lista que va al AddRange
-                        list.Add(stock);
-
-                        //context.Stocks.AddRange(stock);
+                            //Se agrega a la lista que va al AddRange
+                            list.Add(stock);
+                        }
 
                         i++;
                     }
@@ -222,9 +229,7 @@ namespace PruebaAA_ACastro
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                result = false;
             }
-            return result;
         }
 
     }
