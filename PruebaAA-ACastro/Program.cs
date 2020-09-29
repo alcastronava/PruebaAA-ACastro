@@ -14,8 +14,8 @@ namespace PruebaAA_ACastro
 {
     class Program
     {
-        static readonly string url = "https://drive.google.com/uc?export=download&id=1odSfITqFQjOODr29dz-soWFlvHk4LL2H"; //aprox 10 MB
-        //static readonly string url = "https://storage10082020.blob.core.windows.net/y9ne9ilzmfld/Stock.CSV"; //aprox 637 MB
+        //static readonly string url = "https://drive.google.com/uc?export=download&id=1odSfITqFQjOODr29dz-soWFlvHk4LL2H"; //aprox 10 MB
+        static readonly string url = "https://storage10082020.blob.core.windows.net/y9ne9ilzmfld/Stock.CSV"; //aprox 637 MB
         static readonly string destFileName = "Stock.csv";
         static string sTotal = string.Empty;
 
