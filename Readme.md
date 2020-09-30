@@ -4,6 +4,7 @@ Descarga de fichero .csv almacenado en una cuenta de almacenamiento e insertar s
 
 El fichero contiene las columnas 
 PointOfSale, Product, Date, Stock
+
 Como ejemplo:
 121017;17240503103734;2019-08-17;2
 
@@ -13,7 +14,7 @@ Para ejecutar este programa:
   - Abra el código de la aplicación de consola desde Visual Studio 2019.
   - Compile.
   - En PruebaAAContext.cs Reemplace los valores para "{SQLServerInstance}" y "{DBName}" por algun valor valido para su BD SQL Server local.
-  - En Visual Studio2019 Abra el Package Manager Console y ejecute el comando "update-database".
+  - En Visual Studio 2019 abra el Package Manager Console y ejecute el comando "update-database".
   - Ejecute el programa.
 
 ```sh
